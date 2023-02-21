@@ -1,0 +1,30 @@
+{
+	"id": "marshall-cameras",
+	"name": "marshall-cameras",
+	"shortname": "m-cam",
+	"description": "Marshall Cameras",
+	"version": "1.0.0",
+	"license": "MIT",
+	"repository": "",
+	"bugs": "",
+	"maintainers": [
+		{
+			"name": "Jan Görgen",
+			"email": "jan-goergen@web.de"
+		}
+	],
+	"legacyIds": [],
+	"runtime": {
+		"type": "node18",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../index.js"
+	},
+	"manufacturer": "Marshall",
+	"products": [
+		"CVxxx IP-Cameras"
+	],
+	"keywords": [
+		"Marshall Camera"
+	]
+}
