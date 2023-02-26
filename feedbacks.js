@@ -217,8 +217,41 @@ function getFeedbacks(inst) {
         },
 
         
-
-        preset_call_mode: {
+        presets_select_actions: {
+            type: 'boolean',
+            name: 'Presets: Selected Action',
+            description: 'Show feedback for selected Action for presets',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'PresetSet',
+                    choices: [
+                        {'id': 'PresetCall', 'label': 'Call Preset'},
+                        {'id': 'PresetSet', 'label': 'Set Preset'},
+                        {'id': 'PresetClear', 'label': 'Clear Preset'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Invert',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(0, 0, 0),
+                bgcolor: combineRgb(255, 255, 0)
+            },
+            callback: (event) => {
+                if (inst.data.selectedPresetAction == event.options.mode) {
+                    return (event.options.invert) ? false : true
+                }
+                return (event.options.invert) ? true : false
+            }
+        },
+        presets_call_mode: {
             type: 'boolean',
             name: 'Preset Call Mode',
             description: 'Show feedback for Preset Call Mode',
@@ -239,10 +272,7 @@ function getFeedbacks(inst) {
                 bgcolor: combineRgb(0, 0, 255)
             },
             callback: (event) => {
-                if (inst.data.CallMode == event.options.mode) {
-                    return true
-                }
-                return false
+                return (inst.data.CallMode == event.options.mode) ? true : false
             }
         },
 

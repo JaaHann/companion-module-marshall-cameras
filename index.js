@@ -32,7 +32,7 @@ class mCamInstance extends InstanceBase {
 
 		this.connTimer = undefined
 		this.error = false
-		this.requestTimeout = 1500
+		this.requestTimeout = 1000
 
 		this.iFrameMapping = {
 			stream1: {
@@ -60,6 +60,7 @@ class mCamInstance extends InstanceBase {
 				camera: false,
 				stream: false
 			},
+			selectedPresetAction: 'PresetCall',
 			AudioDelay: '',
 			AudioDelayTime: '',
 			AudioIn: '',

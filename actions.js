@@ -615,13 +615,12 @@ function getActions(inst) {
         },
 
 
-
-        presets: {
-            name: 'Presets',
+        presets_select_actions: {
+            name: 'Presets: Select Action',
             options: [
                 {
                     type: 'dropdown',
-                    label: 'Mode',
+                    label: 'Mode:',
                     id: 'mode',
                     default: 'PresetCall',
                     choices: [
@@ -629,10 +628,30 @@ function getActions(inst) {
                         {'id': 'PresetSet', 'label': 'Set Preset'},
                         {'id': 'PresetClear', 'label': 'Clear Preset'}
                     ]
+                }
+            ],
+            callback: async (event) => {
+                inst.data.selectedPresetAction = event.options.mode
+            },
+        },
+        presets_actions: {
+            name: 'Presets: Call Action',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'PresetCall',
+                    choices: [
+                        {'id': 'PresetCall', 'label': 'Call Preset'},
+                        {'id': 'PresetSet', 'label': 'Set Preset'},
+                        {'id': 'PresetClear', 'label': 'Clear Preset'},
+                        {'id': 'selected', 'label': 'Selected Action'}
+                    ]
                 },
                 {
                     type: 'number',
-                    label: 'Number (0 - 255)',
+                    label: 'Number: (0 - 255)',
                     id: 'value',
                     default: 0,
                     min: 0,
@@ -640,7 +659,7 @@ function getActions(inst) {
                 }
             ],
             callback: async (event) => {
-                inst.makeRequest('presetposition', [[event.options.mode, event.options.value]])
+                inst.makeRequest('presetposition', [[(event.options.mode == 'selected') ? inst.data.selectedPresetAction : event.options.mode, event.options.value]])
             },
         },
         preset_call_mode: {
