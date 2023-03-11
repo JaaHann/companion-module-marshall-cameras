@@ -4,6 +4,7 @@ const { InstanceBase, Regex, runEntrypoint } = require('@companion-module/base')
 const UpgradeScripts = require('./upgrades')
 const getActions = require('./actions')
 const getFeedbacks = require('./feedbacks')
+const { getVariables, defaultVariables } = require('./variables')
 const getPresets = require('./presets')
 const crypto = require('crypto')
 const http = require('http')
@@ -17,17 +18,18 @@ class mCamInstance extends InstanceBase {
 		this.pollTimer = undefined
 		this.pollCommands = [
 			'camera',
-			'freedconfig',
+			// 'freedconfig',
 			'imaging',
 			'mped2ts',
 			'network',
+			'ndi',
 			'presetposition',
 			'ptzf',
 			'rtmp',
 			'srt',
 			'system',
 			'tally',
-			'user'
+			// 'user'
 		]
 
 		this.connTimer = undefined
@@ -55,28 +57,97 @@ class mCamInstance extends InstanceBase {
 			},
 		}
 
+		this.presetSpeed = {
+			'0': '5 deg/sec',
+			'1': '25 deg/sec',
+			'2': '50 deg/sec',
+			'3': '80 deg/sec',
+			'4': '120 deg/sec',
+			'5': '160 deg/sec',
+			'6': '200 deg/sec',
+			'7': '300 deg/sec'
+		}
+
 		this.data = {
-			restartEvents: {
-				camera: false,
-				stream: false
-			},
-			selectedPresetAction: 'PresetCall',
+			// audio
 			AudioDelay: '',
 			AudioDelayTime: '',
 			AudioIn: '',
 			AudioInVolume: '',
+			MicLineSelect: '',
+
+			// camera
+			HdmiColor: '',
+			Mirror: '',
+			ModelName: '',
+			OutputSource: '',
+			OverlayTopLeftMode: '',
+			OverlayTopRightMode: '',
+			Resolution: '',
+			Uptime: '',
+
+			// exposure
+			ExposureCompensation: '',
+			ExposureExposureTime: '',
+			ExposureExposureTimePri: '',
+			ExposureGain: '',
+			ExposureIris: '',
+			ExposureIrisPri: '',
+			ExposureMode: '',
+
+			// focus
+			FocusMode: '',
+			PTZAssist: '',
+			SmartAF: '',
+
+			// image
+			ColorHue: '',
+			ColorSaturation: '',
+			DigitalBrightLevel: '',
+			DetailLevel: '',
+			GammaLevel: '',
+			ImageMode: '',
+			NoiseReduction2DLevel: '',
+			NoiseReduction3DLevel: '',
+			PictureEffect: '',
+			VisibilityEnhancerLevel: '',
+
+			// ndi
+			NdiEnable: '',
+
+			// pan/tilt
+			AbsolutePTZF: '',
+			MotionSpeed: 1,
+			PanLeftLimit: '',
+			PanRightLimit: '',
+			PanTiltLimit: '',
+			PTZSpeedComp: '',
+			TiltDownLimit: '',
+			TiltUpLimit: '',
+
+			// presets
+			CallMode: '',
+			PresetAF: '',
+			PresetSpeed: '',
+			PTZMotionSync: '',
+			selectedPresetAction: 'PresetCall',
+
+			// restarts
+			restartEvents: {
+				camera: false,
+				stream: false
+			},
+
+			// streams
 			BitRate1: 0,
 			BitRate2: 0,
 			BitRate3: 0,
 			CBR1: '',
 			CBR2: '',
 			CBR3: '',
-			DZoomLimit: '',
-			FocusMode: '',
 			FrameRate1: '',
 			FrameRate2: '',
 			FrameRate3: '',
-			HdmiColor: '',
 			IFrameRatio1: '',
 			IFrameRatio2: '',
 			IFrameRatio3: '',
@@ -86,18 +157,18 @@ class mCamInstance extends InstanceBase {
 			ImageSize1: '',
 			ImageSize2: '',
 			ImageSize3: '',
-			MicLineSelect: '',
-			Mirror: '',
-			OverlayTopLeftMode: '',
-			OverlayTopRightMode: '',
-			OutputSource: '',
-			ModelName: '',
-			Time: '',
-			Uptime: '',
-			AbsolutePTZF: '',
-			CallMode: '',
+			MPEG2TSEnable: '',
+			RtmpEnable: '',
+			SRTEnable: '',
+
+			// white balance
 			WhiteBalanceCrGain: '',
-			WhiteBalanceCbGain: ''
+			WhiteBalanceCbGain: '',
+			WhiteBalanceMode: '',
+
+			// zoom
+			DZoomLimit: '',
+			ZoomTracking: '',
 		}
 
 		this.restarts = {
@@ -118,6 +189,9 @@ class mCamInstance extends InstanceBase {
 			ImageCodec2: 'stream',
 			ImageCodec3: 'stream',
 			OutputSource: 'camera',
+			Resolution: 'camera',
+			SmartAF: 'camera',
+			NdiEnable: 'camera',
 		}
 	}
 
@@ -219,22 +293,77 @@ class mCamInstance extends InstanceBase {
 					this.error = false
 				}
 				this.updateData(res.data.inquiry, this.data, [ // update from response
+					// audio
 					'AudioDelay',
 					'AudioDelayTime',
 					'AudioIn',
 					'AudioInVolume',
+					'MicLineSelect',
+
+					// camera
+					'HdmiColor',
+					'Mirror',
+					'ModelName',
+					'OutputSource',
+					'OverlayTopLeftMode',
+					'OverlayTopRightMode',
+					'Resolution',
+					'Uptime',
+
+					// exposure
+					'ExposureCompensation',
+					'ExposureExposureTime',
+					'ExposureExposureTimePri',
+					'ExposureGain',
+					'ExposureIris',
+					'ExposureIrisPri',
+					'ExposureMode',
+
+					// focus
+					'FocusMode',
+					'PTZAssist',
+					'SmartAF',
+
+					// image
+					'ColorHue',
+					'ColorSaturation',
+					'DigitalBrightLevel',
+					'DetailLevel',
+					'GammaLevel',
+					'ImageMode',
+					'NoiseReduction2DLevel',
+					'NoiseReduction3DLevel',
+					'PictureEffect',
+					'VisibilityEnhancerLevel',
+
+					// ndi
+					'NdiEnable',
+
+					// pan/tilt
+					'AbsolutePTZF',
+					'PanLeftLimit',
+					'PanRightLimit',
+					'PanTiltLimit',
+					'PTZMotionSync',
+					'PTZSpeedComp',
+					'TiltDownLimit',
+					'TiltUpLimit',
+
+					// presets
+					'CallMode',
+					'PresetAF',
+					'PresetSpeed',
+
+					// streams
 					'BitRate1',
 					'BitRate2',
 					'BitRate3',
 					'CBR1',
 					'CBR2',
 					'CBR3',
-					'DZoomLimit',
-					'FocusMode',
 					'FrameRate1',
 					'FrameRate2',
 					'FrameRate3',
-					'HdmiColor',
 					'IFrameRatio1',
 					'IFrameRatio2',
 					'IFrameRatio3',
@@ -244,17 +373,18 @@ class mCamInstance extends InstanceBase {
 					'ImageSize1',
 					'ImageSize2',
 					'ImageSize3',
-					'MicLineSelect',
-					'Mirror',
-					'OverlayTopLeftMode',
-					'OverlayTopRightMode',
-					'OutputSource',
-					'ModelName',
-					'Uptime',
-					'AbsolutePTZF',
-					'CallMode',
+					'MPEG2TSEnable',
+					'RtmpEnable',
+					'SRTEnable',
+
+					// white balance
 					'WhiteBalanceCrGain',
-					'WhiteBalanceCbGain'
+					'WhiteBalanceCbGain',
+					'WhiteBalanceMode',
+
+					// zoom
+					'DZoomLimit',
+					'ZoomTracking',
 				])
 			}
 			else if (!res.response) {
@@ -263,38 +393,185 @@ class mCamInstance extends InstanceBase {
 		})
 	}
 
+	parseFocusMode(mode, smart) {
+		if (mode == 'auto' && smart == 'on') {
+			return 'Auto-Face'
+		}
+		return (mode == 'auto') ? 'Auto' : 'Manual'
+	}
+
+	parseNorm(resolution) {
+		if (resolution[resolution.length-3] !== '_') {
+			return resolution.slice(0, -2).replace('_', '/') + '.' + resolution.slice(-2)
+		}
+		return resolution.replace('_', '/')
+	}
+
+	parseNR(value) {
+		return {
+			'0': 'Off',
+			'1': 'Low',
+			'2': 'Mid',
+			'3': 'High'
+		}[value]
+	}
+
+	parseComp(value) {
+		return {
+			'0': ['-5.0 dB', '-8.0 dB'],
+			'1': ['-4.0 dB', '-6.4 dB'],
+			'2': ['-3.0 dB', '-4.8 dB'],
+			'3': ['-2.0 dB', '-3.2 dB'],
+			'4': ['-1.0 dB', '-1.6 dB'],
+			'5': ['0.0 dB', '0.0 dB'],
+			'6': ['+1.0 dB', '+1.6 dB'],
+			'7': ['+2.0 dB', '+3.2 dB'],
+			'8': ['+3.0 dB', '+4.8 dB'],
+			'9': ['+4.0 dB', '+6.4 dB'],
+			'10': ['+5.0 dB', '+8.0 dB']
+		}[value]
+	}
+
+	parseShut() {
+		let value = (this.data.ExposureMode == 'shutter') ? this.data.ExposureExposureTimePri : this.data.ExposureExposureTime
+		return {
+            '21': ['1/1', '1/1'],
+            '20': ['1/2', '1/2'],
+            '19': ['1/4', '1/4'],
+            '18': ['1/8', '1/8'],
+            '17': ['1/15', '1/12'],
+            '16': ['1/30', '1/25'],
+            '15': ['1/60', '1/50'],
+            '14': ['1/90', '1/75'],
+            '13': ['1/100', '1/100'],
+            '12': ['1/120', '1/120'],
+            '11': ['1/180', '1/150'],
+            '10': ['1/250', '1/215'],
+            '9': ['1/350', '1/300'],
+            '8': ['1/500', '1/425'],
+            '7': ['1/725', '1/600'],
+            '6': ['1/1000', '1/1000'],
+            '5': ['1/1500', '1/1250'],
+            '4': ['1/2000', '1/1750'],
+            '3': ['1/2500', '1/2500'],
+            '2': ['1/3000', '1/3000'],
+            '1': ['1/5000', '1/5000'],
+            '0': ['1/10000', '1/10000']
+		}[value]
+	}
+
+	parseIris() {
+		let value = (this.data.ExposureMode == 'iris') ? this.data.ExposureIrisPri : this.data.ExposureIris
+		return {
+            '15': 'Closed',
+			'14': 'F1.6',
+            '13': 'F2.0',
+            '12': 'F2.2',
+            '11': 'F2.7',
+            '10': 'F3.2',
+            '9': 'F3.8',
+            '8': 'F4.5',
+            '7': 'F5.4',
+            '6': 'F6.3',
+            '5': 'F7.8',
+            '4': 'F9.0',
+            '3': 'F11',
+            '2': 'F13',
+            '1': 'F16',
+            '0': 'F18'
+		}[value]
+	}
+
+	parseExp(value) {
+		return {
+			'auto': 'Full Auto',
+			'shutter': 'Shutter-Prio',
+			'iris': 'Iris-Prio',
+			'manual': 'Manual'
+		}[value]
+	}
+
+	parseWdr(value) {
+		return {
+			'0': 'Off',
+			'1': 'Low',
+			'2': 'Mid',
+			'3': 'High'
+		}[value]
+	}
+
 	updateData(source, target, variables) {
 		variables.forEach((variable) => { // update internal data object
 			target[variable] = source[variable]
 		})
 
 		this.setVariableValues({ // update variables
-			audio_in_delay_time: target.AudioDelayTime,
-			audio_in_volume: target.AudioInVolume,
-			stream1_bitrate: target.BitRate1,
-			stream2_bitrate: target.BitRate2,
-			stream3_bitrate: target.BitRate3,
-			stream1_mode: (target.CBR1 == 'on') ? 'CBR' : 'VBR',
-			stream2_mode: (target.CBR2 == 'on') ? 'CBR' : 'VBR',
-			stream3_mode: (target.CBR3 == 'on') ? 'CBR' : 'VBR',
-			digital_zoom_limit: target.DZoomLimit,
-			focus_mode: target.FocusMode,
-			stream1_frame_rate: target.FrameRate1,
-			stream2_frame_rate: target.FrameRate2,
-			stream3_frame_rate: target.FrameRate3,
-			// stream1_keyframe_interval: target.IFrameRatio1,
-			// stream2_keyframe_interval: target.IFrameRatio2,
-			// stream3_keyframe_interval: target.IFrameRatio3,
-			stream1_resolution: target.ImageSize1.replace(',', 'x'),
-			stream2_resolution: target.ImageSize2.replace(',', 'x'),
-			stream3_resolution: target.ImageSize3.replace(',', 'x'),
-			audio_in_level: target.MicLineSelect,
-			image_orientation: target.Mirror.replace('off', 'normal'),
-			model: target.ModelName,
-			uptime: target.Uptime,
+			// audio
+			audio_delay_time: target.AudioDelayTime,
+			audio_level: target.MicLineSelect,
+			audio_volume: target.AudioInVolume,
+
+			// camera
+			camera_image_orientation: target.Mirror.replace('off', 'normal'),
+			camera_model: target.ModelName,
+			camera_uptime: target.Uptime,
+			camera_video_norm: this.parseNorm(target.Resolution),
+
+			// exposure
+			exposure_compensation: this.parseComp(target.ExposureCompensation,)[(['CV420e', 'CV730', 'CV730-NDI', 'CV730-HN'].includes(target.ModelName)) ? 1 : 0],
+			exposure_gain: `+${(parseInt(target.ExposureGain)-1)*3} dB`,
+			exposure_iris: this.parseIris(),
+			exposure_mode: this.parseExp(target.ExposureMode),
+			exposure_shutter_speed: this.parseShut()[(['25', '50'].includes(target.Resolution.slice(-2))) ? 1 : 0],
+
+			// focus
+			focus_mode: this.parseFocusMode(target.FocusMode, target.SmartAF),
+
+			// image
+			image_2d_noise_reduction: this.parseNR(target.NoiseReduction2DLevel),
+			image_3d_noise_reduction: this.parseNR(target.NoiseReduction3DLevel),
+			image_brightness: target.DigitalBrightLevel,
+			image_gamma: target.GammaLevel,
+			image_hue: target.ColorHue,
+			image_saturation: target.ColorSaturation,
+			image_sharpness: target.DetailLevel,
+			image_wdr: this.parseWdr(target.VisibilityEnhancerLevel),
+
+			// pan/tilt
+			pt_motion_speed: target.MotionSpeed,
+			pt_pan_left_limit: target.PanLeftLimit,
+			pt_pan_right_limit: target.PanRightLimit,
+			pt_tilt_down_limit: target.TiltDownLimit,
+			pt_tilt_up_limit: target.TiltUpLimit,
+
+			// presets
 			preset_call_mode: target.CallMode,
-			red_gain: target.WhiteBalanceCrGain,
-			blue_gain: target.WhiteBalanceCbGain
+			preset_execution_speed: this.presetSpeed[target.PresetSpeed],
+
+			// streams
+			stream1_bitrate: target.BitRate1,
+			stream1_frame_rate: target.FrameRate1,
+			// stream1_keyframe_interval: target.IFrameRatio1,
+			stream1_mode: (target.CBR1 == 'on') ? 'CBR' : 'VBR',
+			stream1_resolution: target.ImageSize1.replace(',', 'x'),
+			stream2_bitrate: target.BitRate2,
+			stream2_frame_rate: target.FrameRate2,
+			// stream2_keyframe_interval: target.IFrameRatio2,
+			stream2_mode: (target.CBR2 == 'on') ? 'CBR' : 'VBR',
+			stream2_resolution: target.ImageSize2.replace(',', 'x'),
+			stream3_bitrate: target.BitRate3,
+			stream3_mode: (target.CBR3 == 'on') ? 'CBR' : 'VBR',
+			// stream3_frame_rate: target.FrameRate3,
+			stream3_keyframe_interval: target.IFrameRatio3,
+			stream3_resolution: target.ImageSize3.replace(',', 'x'),
+
+			// white balance
+			wb_gain_blue: target.WhiteBalanceCbGain,
+			wb_gain_red: target.WhiteBalanceCrGain,
+			wb_mode: target.WhiteBalanceMode,
+
+			// zoom
+			zoom_digital_zoom_limit: target.DZoomLimit,
 		})
 
 		this.checkFeedbacks() // update feedbacks
@@ -534,67 +811,12 @@ class mCamInstance extends InstanceBase {
 	}
 
 	initVariables() {
-		this.setVariableDefinitions([
-			{variableId: 'audio_in_delay_time', name: 'Audio In Delay Time'},
-			{variableId: 'audio_in_volume', name: 'Audio In Volume'},
-			{variableId: 'stream1_bitrate', name: 'Stream1 Bitrate'},
-			{variableId: 'stream2_bitrate', name: 'Stream2 Bitrate'},
-			{variableId: 'stream3_bitrate', name: 'Stream3 Bitrate'},
-			{variableId: 'stream1_mode', name: 'Stream1 Mode'},
-			{variableId: 'stream2_mode', name: 'Stream2 Mode'},
-			{variableId: 'stream3_mode', name: 'Stream3 Mode'},
-			{variableId: 'digital_zoom_limit', name: 'Digital Zoom Limit'},
-			{variableId: 'focus_mode', name: 'Focus Mode'},
-			{variableId: 'stream1_frame_rate', name: 'Stream1 Frame Rate'},
-			{variableId: 'stream2_frame_rate', name: 'Stream2 Frame Rate'},
-			{variableId: 'stream3_frame_rate', name: 'Stream3 Frame Rate'},
-			// {variableId: 'stream1_keyframe_interval', name: 'Stream1 Keyframe Interval'},
-			// {variableId: 'stream2_keyframe_interval', name: 'Stream2 Keyframe Interval'},
-			// {variableId: 'stream3_keyframe_interval', name: 'Stream3 Keyframe Interval'},
-			{variableId: 'stream1_resolution', name: 'Stream1 Resolution'},
-			{variableId: 'stream2_resolution', name: 'Stream2 Resolution'},
-			{variableId: 'stream3_resolution', name: 'Stream3 Resolution'},
-			{variableId: 'audio_in_level', name: 'Audio In Level'},
-			{variableId: 'image_orientation', name: 'Image Orientation'},
-			{variableId: 'model', name: 'Model Name'},
-			{variableId: 'uptime', name: 'Uptime'},
-			{variableId: 'preset_call_mode', name: 'Preset Call Mode'},
-			{variableId: 'red_gain', name: 'Red Gain'},
-			{variableId: 'blue_gain', name: 'Blue Gain'}
-		])
-
-		this.setVariableValues({
-			audio_in_delay_time: 1,
-			audio_in_volume: 0,
-			stream1_bitrate: 0,
-			stream2_bitrate: 0,
-			stream3_bitrate: 0,
-			stream1_mode: '',
-			stream2_mode: '',
-			stream3_mode: '',
-			digital_zoom_limit: '',
-			focus_mode: '',
-			stream1_frame_rate: '',
-			stream2_frame_rate: '',
-			stream3_frame_rate: '',
-			// stream1_keyframe_interval: '',
-			// stream2_keyframe_interval: '',
-			// stream3_keyframe_interval: '',
-			stream1_resolution: '',
-			stream2_resolution: '',
-			stream3_resolution: '',
-			audio_in_level: '',
-			image_orientation: '',
-			model: '',
-			uptime: '',
-			preset_call_mode: '',
-			red_gain: '',
-			blue_gain: '',
-		})
+		this.setVariableDefinitions(getVariables(this))
+		this.setVariableValues(defaultVariables())
 	}
 
 	initPresets() {
-		this.setPresetDefinitions(getPresets())
+		this.setPresetDefinitions(getPresets(this))
 	}
 }
 

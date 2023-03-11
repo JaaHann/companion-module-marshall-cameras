@@ -4,67 +4,71 @@ const { combineRgb } = require('@companion-module/base')
 
 
 
+function simple(a, b, invert=false) {
+    if (a == b) {
+        return (invert) ? false : true
+    }
+    return (invert) ? true : false
+}
+
+function simpleN(a, b, invert=false) {
+    if (a !== b) {
+        return (invert) ? false : true
+    }
+    return (invert) ? true : false
+}
+
+
+
 function getFeedbacks(inst) {
     return {
 
-        //camera
-        camera_audio_delay: {
+        //audio
+        audio_delay: {
             type: 'boolean',
-            name: 'Camera: Audio Delay',
-            description: 'Show feedback for Audio Delay ON/OFF',
+            name: 'Audio: Delay ON/OFF',
+            description: 'Show feedback for active Audio Delay',
             options: [
-                {
-                    type: 'dropdown',
-                    label: 'Delay',
-                    id: 'delay',
-                    default: 'on',
-                    choices: [
-                        {id: 'on', label: 'Enabled'},
-                        {id: 'off', label: 'Disabled'}
-                    ]
-                }
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
             ],
             defaultStyle: {
                 color: combineRgb(255, 255, 255),
                 bgcolor: combineRgb(0, 0, 255)
             },
             callback: (event) => {
-                if (inst.data.AudioDelay == event.options.delay) {
-                    return true
-                }
-                return false
+                return simple(inst.data.AudioDelay, 'on', event.options.invert)
             }
         },
-        camera_audio_in: {
+        audio_input: {
             type: 'boolean',
-            name: 'Camera: Audio In',
-            description: 'Show feedback for Audio In ON/OFF',
+            name: 'Audio: Input ON/OFF',
+            description: 'Show feedback for active Audio Input',
             options: [
-                {
-                    type: 'dropdown',
-                    label: 'Input',
-                    id: 'input',
-                    default: 'on',
-                    choices: [
-                        {id: 'on', label: 'Enabled'},
-                        {id: 'off', label: 'Disabled'}
-                    ]
-                }
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
             ],
             defaultStyle: {
                 color: combineRgb(255, 255, 255),
                 bgcolor: combineRgb(0, 0, 255)
             },
             callback: (event) => {
-                if (inst.data.AudioIn == event.options.input) {
-                    return true
-                }
-                return false
+                return simple(inst.data.AudioIn, 'on', event.options.invert)
             }
         },
-        camera_hdmi_color: {
+
+        // camera
+        camera_hdmi_output_color: {
             type: 'boolean',
-            name: 'Camera: HDMI Format',
+            name: 'Camera: HDMI Output Format',
             description: 'Show feedback for HDMI format',
             options: [
                 {
@@ -73,14 +77,14 @@ function getFeedbacks(inst) {
                     id: 'format',
                     default: 'yuv422',
                     choices: [
-                        {'id': 'yuv420', 'label': 'YUV 420'},
-                        {'id': 'yuv422', 'label': 'YUV 422'},
-                        {'id': 'rgb', 'label': 'RGB'}
+                        {id: 'yuv420', label: 'YUV 420'},
+                        {id: 'yuv422', label: 'YUV 422'},
+                        {id: 'rgb', label: 'RGB'}
                     ]
                 },
 				{
 					type: 'checkbox',
-					label: 'Stream OFF',
+					label: 'Invert:',
 					id: 'invert',
 					default: false,
 				}
@@ -90,44 +94,7 @@ function getFeedbacks(inst) {
                 bgcolor: combineRgb(0, 0, 255)
             },
             callback: (event) => {
-                if (inst.data.HdmiColor == event.options.format) {
-                    return (event.options.invert) ? false : true
-                }
-                return (event.options.invert) ? true : false
-            }
-        },
-        camera_stream: {
-            type: 'boolean',
-            name: 'Camera: Stream ON/OFF',
-            description: 'Show feedback for Stream ON/OFF',
-            options: [
-                {
-                    type: 'dropdown',
-                    label: 'Stream',
-                    id: 'stream',
-                    default: 1,
-                    choices: [
-                        {'id': 1, 'label': 'Stream 1'},
-                        {'id': 2, 'label': 'Stream 2'},
-                        {'id': 3, 'label': 'Stream 3'}
-                    ]
-                },
-				{
-					type: 'checkbox',
-					label: 'Stream OFF',
-					id: 'invert',
-					default: false,
-				}
-            ],
-            defaultStyle: {
-                color: combineRgb(255, 255, 255),
-                bgcolor: combineRgb(255, 0, 0)
-            },
-            callback: (event) => {
-                if (inst.data['ImageCodec' + event.options.stream] != 'off') {
-                    return (event.options.invert) ? false : true
-                }
-                return (event.options.invert) ? true : false
+                return simple(inst.data.HdmiColor, event.options.format, event.options.invert)
             }
         },
         camera_output_source: {
@@ -137,21 +104,19 @@ function getFeedbacks(inst) {
             options: [
                 {
                     type: 'dropdown',
-                    label: 'Output',
+                    label: 'Output:',
                     id: 'output',
                     default: 'hdmi',
                     choices: [
-                        {'id': 'hdmi', 'label': 'HDMI only'},
-                        {'id': 'stream', 'label': 'Stream only'},
-                        {'id': 'ndi', 'label': 'NDI only'},
-                        {'id': 'hdmi+stream', 'label': 'HDMI + Stream'},
-                        {'id': 'hdmi+ndi', 'label': 'HDMI + NDI'},
-                        {'id': 'hdmi+uvc', 'label': 'HDMI + UVC (USB)'},
+                        {id: 'hdmi', label: 'HDMI only'},
+                        {id: 'stream', label: 'Stream only'},
+                        {id: 'hdmi+stream', label: 'HDMI + Stream'},
+                        {id: 'hdmi+uvc', label: 'HDMI + UVC (USB)'},
                     ]
                 },
 				{
 					type: 'checkbox',
-					label: 'Invert',
+					label: 'Invert:',
 					id: 'invert',
 					default: false,
 				}
@@ -161,10 +126,7 @@ function getFeedbacks(inst) {
                 bgcolor: combineRgb(0, 0, 255)
             },
             callback: (event) => {
-                if (inst.data.OutputSource == event.options.output) {
-                    return (event.options.invert) ? false : true
-                }
-                return (event.options.invert) ? true : false
+                return simple(inst.data.OutputSource, event.options.output, event.options.invert)
             }
         },
         camera_overlay: {
@@ -178,9 +140,9 @@ function getFeedbacks(inst) {
                     id: 'area',
                     default: 'both',
                     choices: [
-                        {'id': 'both', 'label': 'Top Left & Right'},
-                        {'id': 'OverlayTopLeftMode', 'label': 'Top Left'},
-                        {'id': 'OverlayTopRightMode', 'label': 'Top Right'}
+                        {id: 'both', label: 'Top Left & Right'},
+                        {id: 'OverlayTopLeftMode', label: 'Top Left'},
+                        {id: 'OverlayTopRightMode', label: 'Top Right'}
                     ]
                 },
                 {
@@ -189,9 +151,9 @@ function getFeedbacks(inst) {
                     id: 'overlay',
                     default: 'off',
                     choices: [
-                        {'id': 'off', 'label': 'Disable'},
-                        {'id': 'daytime', 'label': 'Daytime'},
-                        {'id': 'text', 'label': 'Text'}
+                        {id: 'off', label: 'Disable'},
+                        {id: 'daytime', label: 'Daytime'},
+                        {id: 'text', label: 'Text'}
                     ]
                 },
 				{
@@ -215,50 +177,310 @@ function getFeedbacks(inst) {
                 return (event.options.invert) ? true : false
             }
         },
-
-        
-        presets_select_actions: {
+        camera_video_norm: {
             type: 'boolean',
-            name: 'Presets: Selected Action',
-            description: 'Show feedback for selected Action for presets',
+            name: 'Camera: Video Norm',
+            description: 'Show feedback for current Video Norm',
             options: [
                 {
                     type: 'dropdown',
-                    label: 'Mode:',
-                    id: 'mode',
-                    default: 'PresetSet',
+                    label: 'Norm:',
+                    id: 'norm',
+                    default: '1080p_50',
                     choices: [
-                        {'id': 'PresetCall', 'label': 'Call Preset'},
-                        {'id': 'PresetSet', 'label': 'Set Preset'},
-                        {'id': 'PresetClear', 'label': 'Clear Preset'}
+                        {id: '2160p_5994', label: '2160p/59.94'},
+                        {id: '2160p_50', label: '2160p/50'},
+                        {id: '2160p_2997', label: '2160p/29.97'},
+                        {id: '2160p_25', label: '2160p/25'},
+                        {id: '1080p_5994', label: '1080p/59.94'},
+                        {id: '1080p_50', label: '1080p/50'},
+                        {id: '1080p_2997', label: '1080p/29.97'},
+                        {id: '1080p_25', label: '1080p/25'},
+                        {id: '720p_5994', label: '720p/59.94'},
+                        {id: '720p_50', label: '720p/50'},
+                        {id: '720p_2997', label: '720p/29.97'},
+                        {id: '720p_25', label: '720p/25'},
+                        {id: '1080i_60', label: '1080i/60'},
+                        {id: '1080i_5994', label: '1080i/59.94'},
+                        {id: '1080i_50', label: '1080i/50'}
                     ]
                 },
 				{
 					type: 'checkbox',
-					label: 'Invert',
+					label: 'Invert:',
 					id: 'invert',
 					default: false,
 				}
             ],
             defaultStyle: {
-                color: combineRgb(0, 0, 0),
-                bgcolor: combineRgb(255, 255, 0)
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(255, 0, 0)
             },
             callback: (event) => {
-                if (inst.data.selectedPresetAction == event.options.mode) {
-                    return (event.options.invert) ? false : true
-                }
-                return (event.options.invert) ? true : false
+                return simple(inst.data.Resolution, event.options.norm, event.options.invert)
             }
         },
+
+        // exposure
+        exposure_mode: {
+            type: 'boolean',
+            name: 'Exposure: Mode',
+            description: 'Show feedback for Exposure Mode',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'manual',
+                    choices: [
+                        {id: 'auto', label: 'Full Auto'},
+                        {id: 'shutter', label: 'Shutter Priority'},
+                        {id: 'iris', label: 'Iris Priority'},
+                        {id: 'manual', label: 'Manual'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.ExposureMode, event.options.mode, event.options.invert)
+            }
+        },
+
+        // focus
+        focus_face_prio: {
+            type: 'boolean',
+            name: 'Focus: Face Priority',
+            description: 'Show feedback for active Face Priority',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.SmartAF, 'on', event.options.invert)
+            }
+        },
+        focus_mode: {
+            type: 'boolean',
+            name: 'Focus: Mode',
+            description: 'Show feedback for Focus Mode',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'manual',
+                    choices: [
+                        {id: 'manual', label: 'Manual Focus'},
+                        {id: 'auto', label: 'Auto Focus'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.FocusMode, event.options.mode, event.options.invert)
+            }
+        },
+        focus_ptz_assist: {
+            type: 'boolean',
+            name: 'Focus: PTZ Assist ON/OFF',
+            description: 'Show feedback for active PTZ Assist',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.PTZAssist, 'on', event.options.invert)
+            }
+        },
+
+        // image
+        image_custom: {
+            type: 'boolean',
+            name: 'Image: Custom ON/OFF',
+            description: 'Show feedback for active Custom Image',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.ImageMode, 'custom', event.options.invert)
+            }
+        },
+        image_picture_effect: {
+            type: 'boolean',
+            name: 'Image: Picture Effect',
+            description: 'Show feedback for current Picture Effect',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Effect:',
+                    id: 'effect',
+                    default: 'off',
+                    choices: [
+                        {id: 'off', label: 'Normal'},
+                        {id: 'neg', label: 'Negative'},
+                        {id: 'bw', label: 'Black & White'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: true,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.PictureEffect, event.options.effect, event.options.invert)
+            }
+        },
+
+        //ndi
+        ndi_active: {
+            type: 'boolean',
+            name: 'NDI: ON/OFF',
+            description: 'Show feedback for active NDI output',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.NdiEnable, 'on', event.options.invert)
+            }
+        },
+
+        // pan/tilt
+        pt_motion_speed: {
+            type: 'boolean',
+            name: 'Pan/Tilt: Motion Speed',
+            description: 'Show feedback for specific Motion Speed',
+            options: [
+                {
+                    type: 'number',
+                    label: 'Speed (1 - 24)',
+                    id: 'speed',
+                    default: 1,
+                    min: 1,
+                    max: 24
+                },
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.MotionSpeed, event.options.speed, event.options.invert)
+            }
+        },
+        pt_limit: {
+            type: 'boolean',
+            name: 'Pan/Tilt: Limit ON/OFF',
+            description: 'Show feedback for active pan/tilt limit',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.PanTiltLimit, 'on', event.options.invert)
+            }
+        },
+        pt_speed_comp: {
+            type: 'boolean',
+            name: 'Pan/Tilt: Speed Compensation ON/OFF',
+            description: 'Show feedback for active PTZ Speed Compensation',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.PTZSpeedComp, 'on', event.options.invert)
+            }
+        },
+
+        // presets
         presets_call_mode: {
             type: 'boolean',
-            name: 'Preset Call Mode',
+            name: 'Presets: Call Mode',
             description: 'Show feedback for Preset Call Mode',
             options: [
                 {
                     type: 'dropdown',
-                    label: 'Preset Call Mode',
+                    label: 'Preset Call Mode:',
                     id: 'mode',
                     default: 'normal',
                     choices: [
@@ -272,7 +494,114 @@ function getFeedbacks(inst) {
                 bgcolor: combineRgb(0, 0, 255)
             },
             callback: (event) => {
-                return (inst.data.CallMode == event.options.mode) ? true : false
+                return simple(inst.data.CallMode, event.options.mode)
+            }
+        },
+        presets_execution_speed: {
+            type: 'boolean',
+            name: 'Presets: Execution Speed',
+            description: 'Show feedback for Preset Execution Speed',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Speed:',
+                    id: 'speed',
+                    default: 7,
+                    choices: [
+                        {id: 7, label: '300 deg/sec'},
+                        {id: 6, label: '200 deg/sec'},
+                        {id: 5, label: '160 deg/sec'},
+                        {id: 4, label: '120 deg/sec'},
+                        {id: 3, label: '80 deg/sec'},
+                        {id: 2, label: '50 deg/sec'},
+                        {id: 1, label: '25 deg/sec'},
+                        {id: 0, label: '5 deg/sec'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Invert:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.PresetSpeed, String(event.options.speed), event.options.invert)
+            }
+        },
+        presets_preload_af: {
+            type: 'boolean',
+            name: 'Presets: Preload AF ON/OFF',
+            description: 'Show feedback for active Preload AF',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.PresetAF, 'on', event.options.invert)
+            }
+        },
+        presets_ptz_motion_sync: {
+            type: 'boolean',
+            name: 'Presets: PTZ Motion Sync ON/OFF',
+            description: 'Show feedback for active PTZ Motion Sync',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Inactive:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.PTZMotionSync, 'on', event.options.invert)
+            }
+        },
+        presets_select_action: {
+            type: 'boolean',
+            name: 'Presets: Selected Action',
+            description: 'Show feedback for selected Action for presets',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'PresetSet',
+                    choices: [
+                        {id: 'PresetCall', label: 'Call Preset'},
+                        {id: 'PresetSet', label: 'Set Preset'},
+                        {id: 'PresetClear', label: 'Clear Preset'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Invert:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(0, 0, 0),
+                bgcolor: combineRgb(255, 255, 0)
+            },
+            callback: (event) => {
+                return simple(inst.data.selectedPresetAction, event.options.mode, event.options.invert)
             }
         },
 
@@ -284,7 +613,7 @@ function getFeedbacks(inst) {
             options: [
                 {
                     type: 'dropdown',
-                    label: 'Event',
+                    label: 'Event:',
                     id: 'event',
                     default: 'stream',
                     choices: [
@@ -306,12 +635,129 @@ function getFeedbacks(inst) {
                 bgcolor: combineRgb(0, 0, 0)
             },
             callback: (event) => {
-                if (inst.data.restartEvents[event.options.event]) {
-                    return (event.options.invert) ? false : true
-                }
-                return (event.options.invert) ? true : false
+                return simple(inst.data.restartEvents[event.options.event], true, event.options.invert)
             }
-        }
+        },
+
+        // streams
+        streams_live: {
+            type: 'boolean',
+            name: 'Streams: Live ON/OFF',
+            description: 'Show feedback for active Live Stream',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Protocol:',
+                    id: 'protocol',
+                    default: 'RtmpEnable',
+                    choices: [
+                        {id: 'RtmpEnable', label: 'RTMP / RTMPS'},
+                        {id: 'SRTEnable', label: 'SRT'},
+                        {id: 'MPEG2TSEnable', label: 'MPEG-TS'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Stream OFF:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(255, 0, 0)
+            },
+            callback: (event) => {
+                return simple(inst.data[event.options.protocol], 'on', event.options.invert)
+            }
+        },
+        streams_stream: {
+            type: 'boolean',
+            name: 'Streams: Stream ON/OFF',
+            description: 'Show feedback for active Stream',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Stream:',
+                    id: 'stream',
+                    default: 1,
+                    choices: [
+                        {id: 1, label: 'Stream 1'},
+                        {id: 2, label: 'Stream 2'},
+                        {id: 3, label: 'Stream 3'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Stream OFF:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(255, 0, 0)
+            },
+            callback: (event) => {
+                return simpleN(inst.data['ImageCodec' + event.options.stream], 'off', event.options.invert)
+            }
+        },
+
+        // white balance
+        whitebalance_select_mode: {
+            type: 'boolean',
+            name: 'White Balance: Mode',
+            description: 'Show feedback for current White Balance Mode',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'manual',
+                    choices: [
+                        {id: 'manual', label: 'Manual White Balance'},
+                        {id: 'onepushwb', label: 'One Push White Balance'},
+                        {id: 'atw', label: 'Full Auto White Balance  (1700k - 10000k)'},
+                        {id: 'auto', label: 'Limited Auto White Balance (4000k - 7000k)'},
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Invert:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(255, 0, 0)
+            },
+            callback: (event) => {
+                return simple(inst.data.WhiteBalanceMode, event.options.mode, event.options.invert)
+            }
+        },
+
+        // zoom
+        // camera_zoom_tracking: {
+        //     type: 'boolean',
+        //     name: 'Camera: Zoom Tracking ON/OFF',
+        //     description: 'Show feedback for active Zoom Tracking',
+        //     options: [
+		// 		{
+		// 			type: 'checkbox',
+		// 			label: 'Inactive:',
+		// 			id: 'invert',
+		// 			default: false,
+		// 		}
+        //     ],
+        //     defaultStyle: {
+        //         color: combineRgb(255, 255, 255),
+        //         bgcolor: combineRgb(0, 0, 255)
+        //     },
+        //     callback: (event) => {
+        //         return simple(inst.data.ZoomTracking, 'on', event.options.invert)
+        //     }
+        // },
     }
 }
 
