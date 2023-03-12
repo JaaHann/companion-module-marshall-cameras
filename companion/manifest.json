@@ -5,8 +5,8 @@
 	"description": "Marshall Cameras",
 	"version": "1.0.0",
 	"license": "MIT",
-	"repository": "",
-	"bugs": "",
+	"repository": "https://github.com/JaaHann/companion-module-marshall-cameras",
+	"bugs": "https://github.com/JaaHann/companion-module-marshall-cameras/issues",
 	"maintainers": [
 		{
 			"name": "Jan Görgen",
@@ -25,6 +25,6 @@
 		"CVxxx IP-Cameras"
 	],
 	"keywords": [
-		"Marshall Camera"
+		"Marshall IP Camera"
 	]
 }
