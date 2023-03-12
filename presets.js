@@ -2036,6 +2036,39 @@ function getPresets(inst) {
             ]
         },
 
+        // tally
+        {
+            category: 'Tally',
+            name: 'Toggle Tally Lamp',
+            type: 'button',
+            style: {
+                text: 'Tally',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(51, 0, 0)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'tally_control',
+                            options: {mode: 'toggle'}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'tally_control',
+                    options: {invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(255, 0, 0)
+                    }
+                }
+            ]
+        },
+
         // white balance
         {
             category: 'White Balance',

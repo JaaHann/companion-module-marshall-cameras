@@ -710,6 +710,28 @@ function getFeedbacks(inst) {
             }
         },
 
+        // tally
+        tally_control: {
+            type: 'boolean',
+            name: 'Tally: ON/OFF',
+            description: 'Show feedback for active Tally',
+            options: [
+				{
+					type: 'checkbox',
+					label: 'Tally OFF:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(255, 0, 0)
+            },
+            callback: async (event) => {
+                return simple(inst.data.TallyControl, 'on', event.options.invert)
+            }
+        },
+
         // white balance
         whitebalance_select_mode: {
             type: 'boolean',

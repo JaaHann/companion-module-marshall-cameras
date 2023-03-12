@@ -161,6 +161,11 @@ class mCamInstance extends InstanceBase {
 			RtmpEnable: '',
 			SRTEnable: '',
 
+			// tally
+			TallyCMMDMode: '',
+			TallyControl: '',
+			TallyLevel: '',
+
 			// white balance
 			WhiteBalanceCrGain: '',
 			WhiteBalanceCbGain: '',
@@ -380,6 +385,11 @@ class mCamInstance extends InstanceBase {
 					'MPEG2TSEnable',
 					'RtmpEnable',
 					'SRTEnable',
+
+					// tally
+					'TallyCMMDMode',
+					'TallyControl',
+					'TallyLevel',
 
 					// white balance
 					'WhiteBalanceCrGain',

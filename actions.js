@@ -362,6 +362,55 @@ function getActions(inst) {
             },
         },
 
+        // custom
+        custom_command: {
+            name: 'Custom: Send CGI Command',
+            options: [
+                {
+                    type: 'static-text',
+                    id: 'info',
+                    label: 'IMPORTANT: Use at own risk!\nTest before production.',
+                },
+                {
+                    type: 'dropdown',
+                    label: 'CGI Name:',
+                    id: 'name',
+                    default: 'camera',
+                    choices: [
+                        {id: 'camera', label: 'camera'},
+                        {id: 'freedconfig', label: 'freedconfig'},
+                        {id: 'imaging', label: 'imaging'},
+                        {id: 'main', label: 'main'},
+                        {id: 'mpeg2ts', label: 'mpeg2ts'},
+                        {id: 'ndi', label: 'ndi'},
+                        {id: 'network', label: 'network'},
+                        {id: 'presetposition', label: 'presetposition'},
+                        {id: 'ptzf', label: 'ptzf'},
+                        {id: 'rtmp', label: 'rtmp'},
+                        {id: 'srt', label: 'srt'},
+                        {id: 'system', label: 'system'},
+                        {id: 'tally', label: 'tally'},
+                        {id: 'user', label: 'user'}
+                    ]
+                },
+                {
+                    type: 'textinput',
+                    id: 'parameter',
+                    label: 'Parameter Name:',
+                    default: '',
+                },
+                {
+                    type: 'textinput',
+                    id: 'value',
+                    label: 'Value:',
+                    default: '',
+                }
+            ],
+            callback: async (event) => {
+                inst.makeRequest(event.options.name, [[event.options.parameter, event.options.value]])
+            },
+        },
+
         // exposure
         exposure_gain: {
             name: 'Exposure: Gain',
@@ -1405,7 +1454,6 @@ function getActions(inst) {
                 }
             ],
             callback: async (event) => {
-                console.log("SEL ACTION", event.options.mode)
                 if (event.options.mode == 'PresetCall') {
                     inst.data.selectedPresetAction = event.options.mode
                 }
@@ -1642,6 +1690,66 @@ function getActions(inst) {
                 }
                 
                 inst.makeRequest('camera', parameters)
+            }
+        },
+
+        // tally
+        tally_level: {
+            name: 'Tally: Brightness',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'high',
+                    choices: [
+                        {id: 'cycle', label: 'Cycle All'},
+                        {id: 'off', label: 'Off'},
+                        {id: 'low', label: 'Low'},
+                        {id: 'high', label: 'High'},
+                    ]
+                }
+            ],
+            callback: async (event) => {
+                inst.makeRequest('tally', [['TallyLevel', cycle(event.options.mode, inst.data.TallyLevel, ['off', 'low', 'high'])]])
+            }
+        },
+        tally_cmmd_mode: {
+            name: 'Tally: Command Mode',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'normal',
+                    choices: [
+                        {id: 'toggle', label: 'Toggle'},
+                        {id: 'normal', label: 'Normal'},
+                        {id: 'link', label: 'Link (Auto Change)'}
+                    ]
+                }
+            ],
+            callback: async (event) => {
+                inst.makeRequest('tally', [['TallyCMMDMode', toggle(event.options.mode, inst.data.TallyCMMDMode, ['normal', 'link'])]])
+            }
+        },
+        tally_control: {
+            name: 'Tally: ON/OFF',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'toggle',
+                    choices: [
+                        {id: 'toggle', label: 'Toggle'},
+                        {id: 'on', label: 'Enable'},
+                        {id: 'off', label: 'Disable'}
+                    ]
+                }
+            ],
+            callback: async (event) => {
+                inst.makeRequest('tally', [['TallyControl', toggle(event.options.mode, inst.data.TallyControl, ['on', 'off'])]])
             }
         },
 
