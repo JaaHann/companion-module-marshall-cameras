@@ -21,6 +21,7 @@ Please make shure, that you install the latest firmware for your camera, because
 * Camera: Image Overlay
 * Camera: Output Source
 * Camera: Set Video Norm
+* Custom: Send CGI Command
 * Exposure: Gain
 * Exposure: Iris
 * Exposure: Set Compensation
@@ -57,6 +58,9 @@ Please make shure, that you install the latest firmware for your camera, because
 * Streams: Live ON/OFF
 * Streams: Set Config
 * Streams: Streams ON/OFF
+* Tally: Brightness
+* Tally: Command Mode
+* Tally: ON/OFF
 * White Balance: Red/Blue Gain
 * White Balance: Select Mode
 * White Balance: Select Preset
@@ -89,6 +93,7 @@ Please make shure, that you install the latest firmware for your camera, because
 * Restart: Events
 * Streams: Live ON/OFF
 * Streams: Stream ON/OFF
+* Tally: ON/OFF
 * White Balance: Mode
 * White Balance: Preset
 * Zoom: Active Zooming
