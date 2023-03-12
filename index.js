@@ -167,8 +167,12 @@ class mCamInstance extends InstanceBase {
 			WhiteBalanceMode: '',
 
 			// zoom
+			CurrentZoomPos: 0,
 			DZoomLimit: '',
-			ZoomTracking: '',
+			LastZoomPos: '',
+			TempZoomPos: 0,
+			ZoomSpeed: 1,
+			ZoomTracking: 0,
 		}
 
 		this.restarts = {
@@ -500,10 +504,18 @@ class mCamInstance extends InstanceBase {
 		}[value]
 	}
 
+	parsePositions([x, y, z, f]) {
+		this.data.LastZoomPos = this.data.TempZoomPos
+		this.data.TempZoomPos = this.data.CurrentZoomPos
+		this.data.CurrentZoomPos = parseInt(z, 16)
+	}
+
 	updateData(source, target, variables) {
 		variables.forEach((variable) => { // update internal data object
 			target[variable] = source[variable]
 		})
+
+		this.parsePositions(target.AbsolutePTZF.split(','))
 
 		this.setVariableValues({ // update variables
 			// audio
@@ -571,7 +583,8 @@ class mCamInstance extends InstanceBase {
 			wb_mode: target.WhiteBalanceMode,
 
 			// zoom
-			zoom_digital_zoom_limit: target.DZoomLimit,
+			zoom_digital_zoom_limit: (target.DZoomLimit == 'x1') ? 'OFF' : target.DZoomLimit,
+			zoom_speed: target.ZoomSpeed,
 		})
 
 		this.checkFeedbacks() // update feedbacks

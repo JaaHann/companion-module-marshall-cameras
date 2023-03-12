@@ -78,6 +78,7 @@ function getVariables(inst) {
 
         // zoom
         newVar('zoom_digital_zoom_limit', 'Digital Zoom Limit', ''),
+        newVar('zoom_speed', 'Zoom Speed'),
     ]
 }
 

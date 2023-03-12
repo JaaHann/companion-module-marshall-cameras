@@ -1,5 +1,7 @@
 // presets
 
+
+
 const { combineRgb } = require('@companion-module/base')
 
 // base64 pngs for arrows
@@ -2081,6 +2083,68 @@ function getPresets(inst) {
         },
         {
             category: 'White Balance',
+            name: 'Decrease Red Gain',
+            type: 'button',
+            style: {
+                text: 'Red\n-',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(51, 0, 0)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_red_blue_gain',
+                            options: {channel: 'WhiteBalanceCrGain', mode: 'dec', gain: 1}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_mode',
+                    options: {mode: 'manual', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(255, 0, 0)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Increase Red Gain',
+            type: 'button',
+            style: {
+                text: '+\nRed',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(51, 0, 0)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_red_blue_gain',
+                            options: {channel: 'WhiteBalanceCrGain', mode: 'inc', gain: 1}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_mode',
+                    options: {mode: 'manual', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(255, 0, 0)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
             name: 'Change Blue Gain',
             type: 'button',
             style: {
@@ -2122,6 +2186,332 @@ function getPresets(inst) {
                     }
                 }
             ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Decrease Blue Gain',
+            type: 'button',
+            style: {
+                text: 'Blue\n-',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 51)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_red_blue_gain',
+                            options: {channel: 'WhiteBalanceCbGain', mode: 'dec', gain: 1}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_mode',
+                    options: {mode: 'manual', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(0, 0, 255)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Increase Blue Gain',
+            type: 'button',
+            style: {
+                text: '+\nBlue',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 51)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_red_blue_gain',
+                            options: {channel: 'WhiteBalanceCbGain', mode: 'inc', gain: 1}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_mode',
+                    options: {mode: 'manual', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(0, 0, 255)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Set Bright Sunlight Preset',
+            type: 'button',
+            style: {
+                text: 'Sun-\nlight',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 51)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_select_preset',
+                            options: {preset: '42,54', force: true}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_preset',
+                    options: {preset: '42,54', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(0, 0, 255)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Set Incandescent Bulbs Preset',
+            type: 'button',
+            style: {
+                text: 'Incand.\nBulbs',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 51)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_select_preset',
+                            options: {preset: '36,68', force: true}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_preset',
+                    options: {preset: '36,68', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(0, 0, 255)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Set Fluorescent Bulbs Preset',
+            type: 'button',
+            style: {
+                text: 'Flour.\nBulbs',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 51)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_select_preset',
+                            options: {preset: '40,63', force: true}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_preset',
+                    options: {preset: '40,63', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(0, 0, 255)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Set Mixed Light Preset',
+            type: 'button',
+            style: {
+                text: 'Mixed\nLight',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 51)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_select_preset',
+                            options: {preset: '42,59', force: true}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_preset',
+                    options: {preset: '42,59', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(0, 0, 255)
+                    }
+                }
+            ]
+        },
+        {
+            category: 'White Balance',
+            name: 'Set Cloudy Preset',
+            type: 'button',
+            style: {
+                text: 'Cloudy',
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 51)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'whitebalance_select_preset',
+                            options: {preset: '43,50', force: true}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'whitebalance_select_preset',
+                    options: {preset: '43,50', invert: false},
+                    style: {
+                        color: combineRgb(255, 255, 255),
+                        bgcolor: combineRgb(0, 0, 255)
+                    }
+                }
+            ]
+        },
+
+        // zoom
+        {
+            category: 'Zoom',
+            name: 'Zoom In',
+            type: 'button',
+            style: {
+                text: 'Zoom\nIN',
+                size: '18',
+                color: combineRgb(0, 0, 0),
+                bgcolor: combineRgb(255, 255, 0)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'zoom_manual_adjust',
+                            options: {direction: 'tele', speed: 1}
+                        }
+                    ],
+                    up: [
+                        {
+                            actionId: 'zoom_manual_adjust',
+                            options: {direction: 'stop', speed: 1}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: []
+        },
+        {
+            category: 'Zoom',
+            name: 'Zoom Out',
+            type: 'button',
+            style: {
+                text: 'Zoom\nOUT',
+                size: '18',
+                color: combineRgb(0, 0, 0),
+                bgcolor: combineRgb(255, 255, 0)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'zoom_manual_adjust',
+                            options: {direction: 'wide', speed: 1}
+                        }
+                    ],
+                    up: [
+                        {
+                            actionId: 'zoom_manual_adjust',
+                            options: {direction: 'stop', speed: 1}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: []
+        },
+        {
+            category: 'Zoom',
+            name: 'Change Zoom Speed',
+            type: 'button',
+            style: {
+                text: 'Speed:\n' + cvar('zoom_speed'),
+                size: '18',
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            options: {rotaryActions: true},
+            steps: [
+                {
+                    rotate_left: [
+                        {
+                            actionId: 'zoom_speed',
+                            options: {mode: 'dec', speed: 1}
+                        }
+                    ],
+                    rotate_right: [
+                        {
+                            actionId: 'zoom_speed',
+                            options: {mode: 'inc', speed: 1}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: []
+        },
+        {
+            category: 'Zoom',
+            name: 'Disable Digital Zoom',
+            type: 'button',
+            style: {
+                text: 'D-Zoom:\n' + cvar('zoom_digital_zoom_limit'),
+                size: '18',
+                color: combineRgb(0, 0, 0),
+                bgcolor: combineRgb(255, 255, 0)
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'zoom_digital_zoom_limit',
+                            options: {limit: 'cycle'}
+                        }
+                    ]
+                }
+            ],
+            feedbacks: []
         },
     )
 

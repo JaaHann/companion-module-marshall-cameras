@@ -18,6 +18,13 @@ function simpleN(a, b, invert=false) {
     return (invert) ? true : false
 }
 
+function simpleD(a, b, c, d, invert=false) {
+    if (a == b && c == d) {
+        return (invert) ? false : true
+    }
+    return (invert) ? true : false
+}
+
 
 
 function getFeedbacks(inst) {
@@ -730,14 +737,128 @@ function getFeedbacks(inst) {
             ],
             defaultStyle: {
                 color: combineRgb(255, 255, 255),
-                bgcolor: combineRgb(255, 0, 0)
+                bgcolor: combineRgb(0, 0, 255)
             },
             callback: (event) => {
                 return simple(inst.data.WhiteBalanceMode, event.options.mode, event.options.invert)
             }
         },
+        whitebalance_select_preset: {
+            type: 'boolean',
+            name: 'White Balance: Preset',
+            description: 'Show feedback for current White Balance Preset',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Preset:',
+                    id: 'preset',
+                    default: '42,54',
+                    choices: [
+                        {id: '42,54', label: 'Bright Sunlight'},
+                        {id: '36,68', label: 'Incandescent Bulbs'},
+                        {id: '40,63', label: 'Fluorescent Bulbs'},
+                        {id: '42,59', label: 'Mixed Light'},
+                        {id: '43,50', label: 'Cloudy'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Invert:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                let [red, blue] = event.options.preset.split(',')
+                return simpleD(inst.data.WhiteBalanceCrGain, red, inst.data.WhiteBalanceCbGain, blue, event.options.invert)
+            }
+        },
 
         // zoom
+        zoom_active_zooming: {
+            type: 'boolean',
+            name: 'Zoom: Active Zooming',
+            description: 'Show feedback for active zooming',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Direction:',
+                    id: 'direction',
+                    default: 'tele',
+                    choices: [
+                        {id: 'stop', label: 'Stop'},
+                        {id: 'tele', label: 'Zoom In'},
+                        {id: 'wide', label: 'Zoom Out'}
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Invert:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                if (event.options.direction == 'stop' && inst.data.CurrentZoomPos == inst.data.LastZoomPos) {
+                    return true
+                }
+                else if (event.options.direction == 'tele' && inst.data.CurrentZoomPos > inst.data.LastZoomPos) {
+                    return true
+                }
+                else if (event.options.direction == 'wide' && inst.data.CurrentZoomPos < inst.data.LastZoomPos) {
+                    return true
+                }
+                return false
+            }
+        },
+        zoom_digital_zoom_limit: {
+            type: 'boolean',
+            name: 'Zoom: Digital Zoom Limit',
+            description: 'Show feedback for Digital Zoom Limit',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Limit: (2160p_5994/2160p_50 does NOT support this setting in hdmi+stream mode)',
+                    id: 'limit',
+                    default: 'x1',
+                    choices: [
+                        {id: 'x1', label: 'Disable'},
+                        {id: 'x2', label: 'x2'},
+                        {id: 'x3', label: 'x3'},
+                        {id: 'x4', label: 'x4'},
+                        {id: 'x5', label: 'x5'},
+                        {id: 'x6', label: 'x6'},
+                        {id: 'x7', label: 'x7'},
+                        {id: 'x8', label: 'x8'},
+                        {id: 'x9', label: 'x9'},
+                        {id: 'x10', label: 'x10'},
+                        {id: 'x11', label: 'x11'},
+                        {id: 'x12', label: 'x12'},
+                    ]
+                },
+				{
+					type: 'checkbox',
+					label: 'Invert:',
+					id: 'invert',
+					default: false,
+				}
+            ],
+            defaultStyle: {
+                color: combineRgb(255, 255, 255),
+                bgcolor: combineRgb(0, 0, 255)
+            },
+            callback: (event) => {
+                return simple(inst.data.DZoomLimit, event.options.limit, event.options.invert)
+            }
+        },
         // camera_zoom_tracking: {
         //     type: 'boolean',
         //     name: 'Camera: Zoom Tracking ON/OFF',

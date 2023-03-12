@@ -1777,7 +1777,8 @@ function getActions(inst) {
                     id: 'limit',
                     default: 'x1',
                     choices: [
-                        {id: 'x1', label: 'x1'},
+                        {id: 'cycle', label: 'Cycle All'},
+                        {id: 'x1', label: 'Disable'},
                         {id: 'x2', label: 'x2'},
                         {id: 'x3', label: 'x3'},
                         {id: 'x4', label: 'x4'},
@@ -1793,7 +1794,8 @@ function getActions(inst) {
                 }
             ],
             callback: async (event) => {
-                inst.makeRequest('camera', [['DZoomLimit', event.options.limit]])
+                
+                inst.makeRequest('camera', [['DZoomLimit', cycle(event.options.limit, inst.data.DZoomLimit, ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'x10', 'x11', 'x12'])]])
             }
         },
         zoom_manual_adjust: {
@@ -1812,10 +1814,10 @@ function getActions(inst) {
                 },
                 {
                     type: 'number',
-                    label: 'Speed: (1 - 8)',
+                    label: 'Speed: (1 - 8, 0 = selected speed)',
                     id: 'speed',
                     default: 1,
-                    min: 1,
+                    min: 0,
                     max: 8
                 }
             ],
@@ -1823,12 +1825,45 @@ function getActions(inst) {
                 if (event.options.direction == 'stop') {
                     event.options.speed = 'zoom'
                 }
-                else {
+                else if (event.options.speed > 0) {
                     event.options.speed -= 1
+                }
+                else {
+                    event.options.speed = inst.data.ZoomSpeed-1
                 }
     
                 inst.makeRequest('ptzf', [['Move', `${event.options.direction},${event.options.speed}`]])
             }
+        },
+        zoom_speed: {
+            name: 'Zoom: Speed',
+            options: [
+                {
+                    type: 'dropdown',
+                    label: 'Mode:',
+                    id: 'mode',
+                    default: 'set',
+                    choices: [
+                        {id: 'set', label: 'Set'},
+                        {id: 'inc', label: 'Increase'},
+                        {id: 'dec', label: 'Decrease'}
+                    ]
+                },
+                {
+                    type: 'number',
+                    label: 'Speed (1 - 8)',
+                    id: 'speed',
+                    default: 1,
+                    min: 1,
+                    max: 8
+                }
+            ],
+            callback: async (event) => {
+                event.options.speed = change(event.options.mode, event.options.speed, inst.data.ZoomSpeed)
+                if (event.options.speed >= 1 && event.options.speed <= 8) {
+                    inst.data.ZoomSpeed = event.options.speed
+                }
+            },
         },
         // zoom_tracking: {
         //     name: 'Zoom: Tracking ON/OFF',
