@@ -5,6 +5,8 @@ This module will allow you to control Marshall IP cameras.
 Please make shure, that you install the latest firmware for your camera, because not all firmwares support remote control with this module.
 <br>You can select you IP camera <a href="https://marshall-usa.com/cameras/#IPTV" target="_blank">here</a> and download the latest firmware.
 
+IMPORTANT: Not all cameras support all actions and feedbacks. Please Test before production.
+
 ### Configuration
 * Enter the IP address of the device as well as the username and password in the configuration settings.
 * There is a config setting for the period of the timer used to poll the device for status (small periods can impact performance!)
